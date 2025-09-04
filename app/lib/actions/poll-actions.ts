@@ -10,9 +10,10 @@ async function isUserAdmin(userId: string): Promise<boolean> {
   // Check if user has admin role in profiles table or use a hardcoded admin email
   const { data: userData } = await supabase.auth.getUser();
   
-  // For now, check if user email is in admin list
+  // For security, check if user email is in admin list
   // In production, this should be stored in database with proper role management
-  const adminEmails = ['admin@alxpolly.com', 'root@alxpolly.com']; // Move to env vars later
+  const adminEmails = ['admin@alxpolly.com', 'root@alxpolly.com'];
+  // TODO: Move to database-based role management for production
   return adminEmails.includes(userData.user?.email || '');
 }
 

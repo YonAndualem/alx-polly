@@ -4,8 +4,13 @@ import { getCurrentUser } from '@/app/lib/actions/auth-actions';
 // Import the client component
 import EditPollForm from './EditPollForm';
 
-export default async function EditPollPage({ params }: { params: { id: string } }) {
-  const { poll, error } = await getPollById(params.id);
+export default async function EditPollPage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
+  const { id } = await params;
+  const { poll, error } = await getPollById(id);
   const user = await getCurrentUser();
 
   if (error || !poll) {
