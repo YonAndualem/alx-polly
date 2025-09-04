@@ -1,6 +1,19 @@
-# ALX Polly: A Polling Application
+# ALX Polly: A Secure Polling Application
 
-Welcome to ALX Polly, a full-stack polling application built with Next.js, TypeScript, and Supabase. This project serves as a practical learning ground for modern web development concepts, with a special focus on identifying and fixing common security vulnerabilities.
+Welcome to ALX Polly, a full-stack polling application built with Next.js, TypeScript, and Supabase. This project demonstrates modern web development with a strong focus on security best practices and vulnerability remediation.
+
+## 🔒 Security Audit Complete
+
+**This application has undergone a comprehensive security audit and all identified vulnerabilities have been remediated.**
+
+For detailed information about the security improvements, see: [SECURITY_AUDIT.md](./SECURITY_AUDIT.md)
+
+### Security Improvements Implemented:
+- ✅ **Admin Panel Authorization**: Proper role-based access control
+- ✅ **IDOR Protection**: Ownership verification for all CRUD operations  
+- ✅ **Input Validation**: Comprehensive validation and sanitization
+- ✅ **Authentication Bypass Prevention**: Server-side authentication checks
+- ✅ **Vote Manipulation Protection**: Duplicate vote prevention and validation
 
 ## About the Application
 
