@@ -1,5 +1,6 @@
 'use client';
 
+
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -19,30 +20,41 @@ interface PollDetailClientProps {
   canEdit: boolean;
 }
 
+interface VoteResult {
+  text: string;
+  votes: number;
+  percentage: number;
+}
+
 export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [voteResults, setVoteResults] = useState<any[]>([]);
+  const [voteResults, setVoteResults] = useState<VoteResult[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
 
   const handleVote = async () => {
     if (selectedOption === null) return;
-
     setIsSubmitting(true);
-
+    setError(null);
+    setSuccess(null);
     const result = await submitVote(poll.id, selectedOption);
-
     if (!result.error) {
       setHasVoted(true);
+      setSuccess('Vote submitted successfully!');
       // In a real app, you would fetch updated vote counts here
-      setVoteResults(poll.options.map((option, index) => ({
-        text: option,
-        votes: Math.floor(Math.random() * 10), // Mock data for now
-        percentage: Math.floor(Math.random() * 100)
-      })));
+      setVoteResults(
+        poll.options.map((option, index) => ({
+          text: option,
+          votes: Math.floor(Math.random() * 10), // Mock data for now
+          percentage: Math.floor(Math.random() * 100),
+        }))
+      );
+    } else {
+      setError(result.error);
     }
-
     setIsSubmitting(false);
   };
 
@@ -51,6 +63,8 @@ export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
       const result = await deletePoll(poll.id);
       if (!result.error) {
         router.push('/polls');
+      } else {
+        setError(result.error);
       }
     }
   };
@@ -77,28 +91,42 @@ export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
         )}
       </div>
 
+      {error && (
+        <div className="bg-red-100 border border-red-300 text-red-700 rounded p-3">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="bg-green-100 border border-green-300 text-green-700 rounded p-3">
+          {success}
+        </div>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">{poll.question}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {!hasVoted ? (
-            <div className="space-y-3">
+            <div className="space-y-3" role="radiogroup" aria-label="Poll options">
               {poll.options.map((option, index) => (
                 <button
                   key={index}
                   type="button"
                   role="radio"
                   aria-checked={selectedOption === index}
+                  aria-label={option}
                   className={`w-full text-left p-3 border rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${selectedOption === index ? 'border-blue-500 bg-blue-50' : 'hover:bg-slate-50'}`}
                   onClick={() => setSelectedOption(index)}
                 >
                   {option}
-                </button>))}
+                </button>
+              ))}
               <Button
                 onClick={handleVote}
                 disabled={selectedOption === null || isSubmitting}
                 className="mt-4"
+                aria-disabled={selectedOption === null || isSubmitting}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Vote'}
               </Button>
@@ -116,6 +144,11 @@ export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
                     <div
                       className="bg-blue-600 h-2.5 rounded-full"
                       style={{ width: `${result.percentage}%` }}
+                      aria-valuenow={result.percentage}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      role="progressbar"
+                      aria-label={`Votes for ${result.text}`}
                     ></div>
                   </div>
                 </div>

@@ -55,7 +55,7 @@ async function isUserAdmin(userId: string): Promise<boolean> {
  * }
  * ```
  */
-export async function getAllPolls() {
+export async function getAllPolls(): Promise<{ polls: any[]; error: string | null }> {
   const supabase = await createClient();
 
   // Get user from session
@@ -105,7 +105,7 @@ export async function getAllPolls() {
  * }
  * ```
  */
-export async function adminDeletePoll(id: string) {
+export async function adminDeletePoll(id: string): Promise<{ error: string | null }> {
   const supabase = await createClient();
 
   // Get user from session
@@ -162,7 +162,7 @@ export async function adminDeletePoll(id: string) {
  * }
  * ```
  */
-export async function createPoll(formData: FormData) {
+export async function createPoll(formData: FormData): Promise<{ error: string | null }> {
   const supabase = await createClient();
 
   // Extract and validate form data
@@ -244,7 +244,7 @@ export async function createPoll(formData: FormData) {
  * }
  * ```
  */
-export async function getUserPolls() {
+export async function getUserPolls(): Promise<{ polls: any[]; error: string | null }> {
   const supabase = await createClient();
 
   // Authenticate user session
@@ -290,7 +290,7 @@ export async function getUserPolls() {
  * }
  * ```
  */
-export async function getPollById(id: string) {
+export async function getPollById(id: string): Promise<{ poll: any | null; error: string | null; canEdit?: boolean }> {
   const supabase = await createClient();
 
   // Get user from session for authorization check
@@ -346,7 +346,7 @@ export async function getPollById(id: string) {
  * }
  * ```
  */
-export async function submitVote(pollId: string, optionIndex: number) {
+export async function submitVote(pollId: string, optionIndex: number): Promise<{ error: string | null }> {
   const supabase = await createClient();
 
   // Input validation - ensure vote data integrity
@@ -427,7 +427,7 @@ export async function submitVote(pollId: string, optionIndex: number) {
  * }
  * ```
  */
-export async function deletePoll(id: string) {
+export async function deletePoll(id: string): Promise<{ error: string | null }> {
   const supabase = await createClient();
 
   // Authenticate user session
@@ -493,7 +493,7 @@ export async function deletePoll(id: string) {
  * }
  * ```
  */
-export async function updatePoll(pollId: string, formData: FormData) {
+export async function updatePoll(pollId: string, formData: FormData): Promise<{ error: string | null }> {
   const supabase = await createClient();
 
   // Extract and validate form data

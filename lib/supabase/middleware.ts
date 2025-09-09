@@ -19,7 +19,7 @@ import { NextResponse, type NextRequest } from 'next/server'
  * - Secures session cookies with proper settings
  * - Prevents access to protected resources without authentication
  */
-export async function updateSession(request: NextRequest) {
+export async function updateSession(request: NextRequest): Promise<NextResponse> {
   // Create initial response that will be modified with session data
   let supabaseResponse = NextResponse.next({
     request,
