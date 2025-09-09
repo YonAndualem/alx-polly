@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,14 +25,18 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAllPolls();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAllPolls = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
     const result = await getAllPolls();
-
     if (result.error) {
       setError(result.error);
     } else {
@@ -42,30 +47,20 @@ export default function AdminPage() {
 
   const handleDelete = async (pollId: string) => {
     setDeleteLoading(pollId);
+    setError(null);
+    setSuccess(null);
     const result = await adminDeletePoll(pollId);
-
     if (result.error) {
       setError(result.error);
     } else {
       setPolls(polls.filter((poll) => poll.id !== pollId));
+      setSuccess('Poll deleted successfully!');
     }
-
     setDeleteLoading(null);
   };
 
   if (loading) {
-    return <div className="p-6">Loading admin panel...</div>;
-  }
-
-  if (error) {
-    return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h2 className="text-lg font-semibold text-red-800">Access Denied</h2>
-          <p className="text-red-600 mt-2">{error}</p>
-        </div>
-      </div>
-    );
+    return <div className="p-6" aria-busy="true">Loading admin panel...</div>;
   }
 
   return (
@@ -77,9 +72,20 @@ export default function AdminPage() {
         </p>
       </div>
 
-      <div className="grid gap-4">
+      {error && (
+        <div className="bg-red-100 border border-red-300 text-red-700 rounded p-3">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="bg-green-100 border border-green-300 text-green-700 rounded p-3">
+          {success}
+        </div>
+      )}
+
+      <div className="grid gap-4" role="list" aria-label="All polls">
         {polls.map((poll) => (
-          <Card key={poll.id} className="border-l-4 border-l-blue-500">
+          <Card key={poll.id} className="border-l-4 border-l-blue-500" role="listitem">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
@@ -110,6 +116,8 @@ export default function AdminPage() {
                   size="sm"
                   onClick={() => handleDelete(poll.id)}
                   disabled={deleteLoading === poll.id}
+                  aria-disabled={deleteLoading === poll.id}
+                  aria-label={`Delete poll ${poll.question}`}
                 >
                   {deleteLoading === poll.id ? "Deleting..." : "Delete"}
                 </Button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Session, User } from '@supabase/supabase-js';
 
@@ -58,7 +58,7 @@ const AuthContext = createContext<AuthContextType>({
  * }
  * ```
  */
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
   // Memoize Supabase client to prevent recreation on every render
   const supabase = useMemo(() => createClient(), []);
 
@@ -154,4 +154,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
  * }
  * ```
  */
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextType => useContext(AuthContext);
