@@ -126,7 +126,7 @@ export async function register(data: RegisterFormData) {
  */
 export async function logout() {
   const supabase = await createClient();
-  
+
   // Clear user session and authentication tokens
   const { error } = await supabase.auth.signOut();
   if (error) {
@@ -156,7 +156,7 @@ export async function logout() {
  */
 export async function getCurrentUser() {
   const supabase = await createClient();
-  
+
   // Fetch current user from session
   const { data } = await supabase.auth.getUser();
   return data.user;
@@ -183,7 +183,7 @@ export async function getCurrentUser() {
  */
 export async function getSession() {
   const supabase = await createClient();
-  
+
   // Fetch current session with tokens and metadata
   const { data } = await supabase.auth.getSession();
   return data.session;

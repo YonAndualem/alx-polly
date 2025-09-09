@@ -31,7 +31,7 @@ export default function AdminPage() {
 
   const fetchAllPolls = async () => {
     const result = await getAllPolls();
-    
+
     if (result.error) {
       setError(result.error);
     } else {

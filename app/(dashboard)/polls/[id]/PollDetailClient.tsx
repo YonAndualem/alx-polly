@@ -28,11 +28,11 @@ export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
 
   const handleVote = async () => {
     if (selectedOption === null) return;
-    
+
     setIsSubmitting(true);
-    
+
     const result = await submitVote(poll.id, selectedOption);
-    
+
     if (!result.error) {
       setHasVoted(true);
       // In a real app, you would fetch updated vote counts here
@@ -42,7 +42,7 @@ export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
         percentage: Math.floor(Math.random() * 100)
       })));
     }
-    
+
     setIsSubmitting(false);
   };
 
@@ -66,8 +66,8 @@ export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
             <Button variant="outline" asChild>
               <Link href={`/polls/${poll.id}/edit`}>Edit Poll</Link>
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="text-red-500 hover:text-red-700"
               onClick={handleDelete}
             >
@@ -85,17 +85,19 @@ export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
           {!hasVoted ? (
             <div className="space-y-3">
               {poll.options.map((option, index) => (
-                <div 
-                  key={index} 
-                  className={`p-3 border rounded-md cursor-pointer transition-colors ${selectedOption === index ? 'border-blue-500 bg-blue-50' : 'hover:bg-slate-50'}`}
+                <button
+                  key={index}
+                  type="button"
+                  role="radio"
+                  aria-checked={selectedOption === index}
+                  className={`w-full text-left p-3 border rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${selectedOption === index ? 'border-blue-500 bg-blue-50' : 'hover:bg-slate-50'}`}
                   onClick={() => setSelectedOption(index)}
                 >
                   {option}
-                </div>
-              ))}
-              <Button 
-                onClick={handleVote} 
-                disabled={selectedOption === null || isSubmitting} 
+                </button>))}
+              <Button
+                onClick={handleVote}
+                disabled={selectedOption === null || isSubmitting}
                 className="mt-4"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Vote'}
@@ -111,8 +113,8 @@ export function PollDetailClient({ poll, canEdit }: PollDetailClientProps) {
                     <span>{result.percentage}% ({result.votes} votes)</span>
                   </div>
                   <div className="w-full bg-slate-100 rounded-full h-2.5">
-                    <div 
-                      className="bg-blue-600 h-2.5 rounded-full" 
+                    <div
+                      className="bg-blue-600 h-2.5 rounded-full"
                       style={{ width: `${result.percentage}%` }}
                     ></div>
                   </div>

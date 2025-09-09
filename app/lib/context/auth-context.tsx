@@ -28,10 +28,10 @@ interface AuthContextType {
  * application, eliminating the need for prop drilling and ensuring
  * consistent auth state management.
  */
-const AuthContext = createContext<AuthContextType>({ 
-  session: null, 
+const AuthContext = createContext<AuthContextType>({
+  session: null,
   user: null,
-  signOut: () => {},
+  signOut: () => { },
   loading: true,
 });
 
@@ -61,7 +61,7 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Memoize Supabase client to prevent recreation on every render
   const supabase = useMemo(() => createClient(), []);
-  
+
   // Authentication state management
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let mounted = true; // Prevent state updates if component unmounts
-    
+
     /**
      * Fetches the current user session on component mount.
      * This ensures the auth state is immediately available when the app loads.
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) {
         console.error('Error fetching user:', error);
       }
-      
+
       // Only update state if component is still mounted
       if (mounted) {
         setUser(data.user ?? null);
@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   console.log('AuthContext: user', user);
-  
+
   return (
     <AuthContext.Provider value={{ session, user, signOut, loading }}>
       {children}

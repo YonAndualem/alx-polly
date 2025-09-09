@@ -23,10 +23,10 @@ import { revalidatePath } from "next/cache";
  */
 async function isUserAdmin(userId: string): Promise<boolean> {
   const supabase = await createClient();
-  
+
   // Check if user has admin role in profiles table or use a hardcoded admin email
   const { data: userData } = await supabase.auth.getUser();
-  
+
   // For security, check if user email is in admin list
   // In production, this should be stored in database with proper role management
   const adminEmails = ['admin@alxpolly.com', 'root@alxpolly.com'];
@@ -57,13 +57,13 @@ async function isUserAdmin(userId: string): Promise<boolean> {
  */
 export async function getAllPolls() {
   const supabase = await createClient();
-  
+
   // Get user from session
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
-  
+
   if (userError || !user) {
     return { polls: [], error: "Authentication required." };
   }
@@ -107,13 +107,13 @@ export async function getAllPolls() {
  */
 export async function adminDeletePoll(id: string) {
   const supabase = await createClient();
-  
+
   // Get user from session
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
-  
+
   if (userError || !user) {
     return { error: "Authentication required." };
   }
@@ -126,7 +126,7 @@ export async function adminDeletePoll(id: string) {
   // Perform deletion with admin privileges
   const { error } = await supabase.from("polls").delete().eq("id", id);
   if (error) return { error: "Failed to delete poll." };
-  
+
   // Revalidate admin page to refresh the UI
   revalidatePath("/admin");
   return { error: null };
@@ -182,7 +182,7 @@ export async function createPoll(formData: FormData) {
   if (options.length > 10) {
     return { error: "Maximum 10 options allowed." };
   }
-  
+
   // Validate each option individually
   for (const option of options) {
     if (!option || option.trim().length === 0) {
@@ -246,7 +246,7 @@ export async function createPoll(formData: FormData) {
  */
 export async function getUserPolls() {
   const supabase = await createClient();
-  
+
   // Authenticate user session
   const {
     data: { user },
@@ -292,12 +292,12 @@ export async function getUserPolls() {
  */
 export async function getPollById(id: string) {
   const supabase = await createClient();
-  
+
   // Get user from session for authorization check
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  
+
   // Fetch the requested poll
   const { data, error } = await supabase
     .from("polls")
@@ -306,13 +306,13 @@ export async function getPollById(id: string) {
     .single();
 
   if (error) return { poll: null, error: "Poll not found." };
-  
+
   // Determine edit permissions based on ownership
   // Public polls can be viewed by anyone, but only owners can edit
-  return { 
-    poll: data, 
-    error: null, 
-    canEdit: user?.id === data.user_id 
+  return {
+    poll: data,
+    error: null,
+    canEdit: user?.id === data.user_id
   };
 }
 
@@ -348,7 +348,7 @@ export async function getPollById(id: string) {
  */
 export async function submitVote(pollId: string, optionIndex: number) {
   const supabase = await createClient();
-  
+
   // Input validation - ensure vote data integrity
   if (!pollId || typeof optionIndex !== 'number' || optionIndex < 0) {
     return { error: "Invalid vote data." };
@@ -429,7 +429,7 @@ export async function submitVote(pollId: string, optionIndex: number) {
  */
 export async function deletePoll(id: string) {
   const supabase = await createClient();
-  
+
   // Authenticate user session
   const {
     data: { user },
@@ -449,9 +449,9 @@ export async function deletePoll(id: string) {
     .delete()
     .eq("id", id)
     .eq("user_id", user.id); // Critical: ownership verification
-    
+
   if (error) return { error: "Failed to delete poll. You can only delete your own polls." };
-  
+
   // Refresh the polls page to reflect changes
   revalidatePath("/polls");
   return { error: null };
@@ -513,7 +513,7 @@ export async function updatePoll(pollId: string, formData: FormData) {
   if (options.length > 10) {
     return { error: "Maximum 10 options allowed." };
   }
-  
+
   // Validate each option individually
   for (const option of options) {
     if (!option || option.trim().length === 0) {
@@ -555,7 +555,7 @@ export async function updatePoll(pollId: string, formData: FormData) {
   // Update the poll with sanitized data and ownership constraint
   const { error } = await supabase
     .from("polls")
-    .update({ 
+    .update({
       question: question.trim(), // Sanitize by trimming whitespace
       options: options.map(opt => opt.trim()) // Sanitize all options
     })
